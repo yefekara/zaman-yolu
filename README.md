@@ -6,7 +6,7 @@
 
 - **Oyun:** `index.html` dosyasına çift tıklayın. Tarayıcıda açılır, kurulum gerekmez. Aynı cihaz, bilgisayara karşı ve pratik modları internetsiz çalışır.
 - **Basılabilir set:** `kartlar.html` dosyasını açıp tarayıcıdan yazdırın (A4, ölçek %100, kenar boşluğu yok, arka plan grafikleri açık). Kural sayfası, tahta, 66 soru kartı ve joker kartları çıkar.
-- **Özel linkle oynama** ve **kartlardaki QR kodlar** için oyunun internette yayınlanması gerekir: bkz. [YAYINLAMA.md](YAYINLAMA.md).
+- **Özel linkle oynama** için oyunun internette yayınlanması gerekir: bkz. [YAYINLAMA.md](YAYINLAMA.md).
 
 ## Dosyalar
 
@@ -14,11 +14,11 @@
 |---|---|
 | `sorular.js` | **Tek soru bankası.** Web oyunu da basılı kartlar da buradan beslenir. |
 | `oyun-motoru.js` | Oyun kuralları (taş-kağıt-makas, altın kare, jokerler, süre, kazanma). Ekrandan ve ağdan bağımsızdır. |
-| `oyun.js` | Ekranlar: menü, tahta, kartlar, pratik, kayıtlar, tek kart (QR). |
+| `oyun.js` | Ekranlar: menü, tahta, kartlar, pratik, kayıtlar, tek kart (`?kart=ID`). |
 | `ag.js` | Özel link modu (PeerJS / WebRTC). Yalnızca bu mod seçilince yüklenir. |
 | `index.html`, `stil.css` | Oyun sayfası ve görünümü. |
 | `kartlar.html` | Basılabilir set. |
-| `test/motor.test.js` | Kural testleri ve süre benzetimi: `node test/motor.test.js` |
+| `../testler/` | Kural ve tarayıcı testleri (proje klasöründe durur, GitHub'a yüklenmez): `node testler/motor.test.js` |
 
 ## Bir soruyu değiştirmek veya eklemek
 

@@ -4,18 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Zaman Yolu – Basılabilir Set</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
 <style>
   @page { size: A4; margin: 0 }
   @page yatay { size: A4 landscape; margin: 0 }
   * { box-sizing: border-box }
-  body { margin: 0; font-family: "Segoe UI", Calibri, Arial, sans-serif; color: #1f2430; background: #e9e6df;
+  :root { --ink: #34304a; --muted: #7a7391; --ana: #ff7a93; --ana-koyu: #e65f7b; --ana-acik: #ffe9ee; --seftali: #ffad8a; --lila: #a07cf0;
+    --yazi: "Nunito", "Segoe UI", system-ui, Arial, sans-serif;
+    --bilgi: #2f6db5; --kanit: #2e8b57; --krono: #d99a17; --kavram: #c8463c; --altin: #c9a227 }
+  body { margin: 0; font-family: var(--yazi); color: var(--ink); background: #f4ebe6;
     -webkit-print-color-adjust: exact; print-color-adjust: exact }
-  :root { --bilgi: #2f6db5; --kanit: #2e8b57; --krono: #d99a17; --kavram: #c8463c; --altin: #c9a227 }
 
-  .ayarlar { max-width: 820px; margin: 16px auto; background: #fff; border-radius: 12px; padding: 14px 16px; font-size: 14px }
-  .ayarlar h1 { font-family: Georgia, serif; font-size: 22px; margin: 0 0 6px }
-  .ayarlar input { width: 100%; padding: 8px 10px; font: inherit; border: 1.5px solid #ddd; border-radius: 8px }
-  .ayarlar button { font: inherit; padding: 9px 16px; border: 0; border-radius: 8px; background: #1f2430; color: #fff; cursor: pointer; margin-top: 8px }
+  .ayarlar { max-width: 820px; margin: 16px auto; background: #fff; border-radius: 16px; padding: 14px 16px; font-size: 14px; border-top: 5px solid var(--ana) }
+  .ayarlar h1 { font-weight: 900; font-size: 22px; margin: 0 0 6px; color: var(--ana-koyu) }
+  .ayarlar input { width: 100%; padding: 8px 10px; font: inherit; border: 2px solid #f1e4dc; border-radius: 12px }
+  .ayarlar button { font: inherit; font-weight: 800; padding: 9px 16px; border: 0; border-radius: 12px; background: var(--ana); color: #fff; cursor: pointer; margin-top: 8px; box-shadow: 0 3px 0 var(--ana-koyu) }
   .ayarlar li { margin-bottom: 4px }
 
   .sayfa { width: 210mm; height: 297mm; margin: 10px auto; background: #fff; position: relative; overflow: hidden; page-break-after: always }
@@ -36,25 +41,29 @@
   .k-sec b { display: inline-block; width: 3.2mm }
   .k-olay { margin: 0; padding-left: 4mm; list-style: upper-roman }
   .k-alt { display: flex; justify-content: space-between; font-size: 5.8pt; color: #777; padding: 1mm 2.4mm; border-top: .2mm dashed #ddd }
-  .k-kavram { font: 800 13pt Georgia, serif; text-align: center; letter-spacing: .04em; margin: 2mm 0 1mm }
+  .k-kavram { font: 900 13pt var(--yazi); text-align: center; letter-spacing: .02em; margin: 2mm 0 1mm }
   .k-yasak { border: .3mm dashed var(--kavram); color: var(--kavram); border-radius: 1.5mm; padding: 1mm 1.5mm; text-align: center }
   .k-ipucu { color: #777; font-size: 6.2pt; margin-top: auto }
   .k-cevap { font-weight: 800; font-size: 8pt }
-  .k-qr { align-self: flex-end; margin-top: auto; display: flex; align-items: flex-end; gap: 1.5mm; font-size: 5.6pt; color: #777; text-align: right }
-  .k-qr .qr img, .k-qr .qr canvas { width: 15mm !important; height: 15mm !important; display: block }
-  .arka .kart-ic { background: #fffdf8 }
+  .k-kaynak { margin-top: auto; display: flex; justify-content: space-between; align-items: baseline; padding-top: 1mm; border-top: .2mm dashed #ddd; font-size: 6pt; color: #777 }
+  .k-kaynak b { font-size: 7.5pt; color: var(--ink) }
+  .arka .kart-ic { background: #fff9f5 }
   .altin-arka .kart-ic { background: #fdf6dc }
 
   /* JOKER */
   .joker .k-govde { align-items: center; justify-content: center; text-align: center; font-size: 8pt }
   .joker .ikon { font-size: 30pt }
-  .joker h3 { font: 800 13pt Georgia, serif; margin: 0 }
+  .joker h3 { font: 900 13pt var(--yazi); margin: 0 }
+  .joker-arka .kart-ic { background: linear-gradient(160deg, var(--ana), var(--seftali)); color: #fff; border-color: var(--ana-koyu) !important }
+  .joker-arka .k-ust { background: rgba(255, 255, 255, .22) }
+  .joker-arka .ikon { width: 22mm; height: 22mm; border-radius: 50%; background: rgba(255, 255, 255, .25); display: grid; place-items: center; font-size: 24pt }
 
   /* TAHTA VE KURALLAR */
-  .tahta-svg { position: absolute; inset: 8mm; width: calc(100% - 16mm); height: calc(100% - 16mm) }
-  .kurallar { padding: 16mm 18mm; font-size: 10.5pt; line-height: 1.45 }
-  .kurallar h2 { font-family: Georgia, serif; font-size: 22pt; margin: 0 0 2mm }
-  .kurallar h3 { font-family: Georgia, serif; margin: 5mm 0 1.5mm; font-size: 13pt }
+  .tahta-svg { position: absolute; inset: 8mm 8mm 11mm; width: calc(100% - 16mm); height: calc(100% - 19mm) }
+  .kurallar { padding: 15mm 18mm; font-size: 10.5pt; line-height: 1.45 }
+  .kurallar h2 { font-weight: 900; font-size: 22pt; margin: 0 0 1mm; color: var(--ana-koyu) }
+  .kurallar h3 { font-weight: 900; margin: 4.5mm 0 1.5mm; font-size: 13pt; padding-bottom: .8mm; border-bottom: .5mm solid var(--ana-acik) }
+  .kurallar .alt-baslik { color: var(--muted); margin: 0 }
   .kurallar ol, .kurallar ul { padding-left: 6mm; margin: 0 }
   .kurallar li { margin-bottom: 1.4mm }
   .renk { display: inline-block; width: 3.5mm; height: 3.5mm; border-radius: .8mm; vertical-align: -.5mm; margin-right: 1mm }
@@ -71,9 +80,6 @@
 <div class="ayarlar">
   <h1>Zaman Yolu · Basılabilir Set</h1>
   <p>Bu sayfa soru kartlarını, tahtayı, kural sayfasını ve joker kartlarını A4 olarak hazırlar. Kartlar <b>sorular.js</b> dosyasından otomatik üretilir.</p>
-  <label>Oyunun internet adresi (QR kodlar bu adrese yönlenir):</label>
-  <input id="adres" placeholder="https://kullaniciadi.github.io/zaman-yolu/">
-  <button id="uygula">QR kodları güncelle</button>
   <ul>
     <li>Yazdırırken <b>kağıt boyutu A4</b>, <b>ölçek %100</b> (sayfaya sığdır kapalı), <b>kenar boşluğu yok</b> ve <b>arka plan grafikleri açık</b> olmalı.</li>
     <li>Çift taraflı yazıcıda <b>“uzun kenardan çevir”</b> seçin. Arka yüzler ön yüzlerle hizalanacak şekilde aynalanmıştır.</li>
@@ -86,7 +92,6 @@
 
 <script src="sorular.js"></script>
 <script src="oyun-motoru.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
   const M = ZamanYoluMotor;
   const TUR = {
@@ -96,13 +101,6 @@
   };
   const HARF = ['A', 'B', 'C', 'D'];
   const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
-
-  function varsayilanAdres() {
-    if (location.protocol.startsWith('http')) return location.href.replace(/kartlar\.html.*$/, '');
-    return 'https://kullaniciadi.github.io/zaman-yolu/';
-  }
-  const kayitliAdres = (() => { try { return localStorage.getItem('zamanyolu-adres'); } catch (e) { return null; } })();
-  document.getElementById('adres').value = kayitliAdres || varsayilanAdres();
 
   function on(q) {
     const t = TUR[q.tur];
@@ -134,7 +132,7 @@
       ic = `<div class="k-cevap">${HARF[q.cevap]}) ${esc(q.secenekler[q.cevap])}</div>`;
     }
     ic += `<div>${esc(q.aciklama)}</div>`;
-    ic += `<div class="k-qr"><div>📖 Ders kitabı<br><b style="font-size:7pt;color:#1f2430">s. ${esc(q.sayfa)}</b><br>Kart ${q.id}</div><div class="qr" data-kart="${q.id}"></div></div>`;
+    ic += `<div class="k-kaynak"><span>📖 Ders kitabı <b>s. ${esc(q.sayfa)}</b></span><span>Kart ${q.id}</span></div>`;
     return `<div class="kart arka ${q.tur === 'altin' ? 'altin-arka' : ''}"><div class="kart-ic" style="border-color:${t.renk}">
       <div class="k-ust" style="background:${t.renk}">CEVAP<small>${q.konu} · ${q.id}</small></div>
       <div class="k-govde">${ic}</div></div></div>`;
@@ -161,49 +159,87 @@
       <div class="k-govde"><div class="ikon">${ikon}</div><h3>${ad}</h3><div>${metin}</div></div></div></div>`;
   }
   function jokerArka() {
-    return `<div class="kart joker arka"><div class="kart-ic" style="border-color:#1f2430">
-      <div class="k-ust" style="background:#1f2430">ZAMAN YOLU<small>Joker</small></div>
+    return `<div class="kart joker joker-arka"><div class="kart-ic">
+      <div class="k-ust">ZAMAN YOLU<small>Joker</small></div>
       <div class="k-govde"><div class="ikon">⏳</div><h3>Zaman Yolu</h3><div>9. Sınıf Tarih</div></div></div></div>`;
   }
+
+  // Tahta: web'deki kıvrılan yolun baskı sürümü (oyun.js tahtaIskeleti ile aynı yerleşim; gölge, ışıltı ve piyon yok)
+  const SATIR_Y = [80, 180, 280];
+  const SUTUN_X = [120, 185, 250, 315, 380];
+  function kareKonumu(k) {
+    if (k === 0) return { x: 50, y: SATIR_Y[0] };
+    if (k >= M.BITIS) return { x: 456, y: SATIR_Y[2] };
+    const satir = Math.floor((k - 1) / 5), sutun = (k - 1) % 5;
+    return { x: SUTUN_X[satir === 1 ? 4 - sutun : sutun], y: SATIR_Y[satir] };
+  }
+  const BOLGE_SIMGE = {
+    1: '<path d="M-20 -12h26a6 6 0 0 1 0 12h-2v14h-26a6 6 0 0 1 0-12h2z"/><circle cx="12" cy="6" r="8" fill="none" stroke-width="3.5"/><path d="M17 12l8 8" stroke-width="4" stroke-linecap="round"/>',
+    2: '<path d="M-24 16h28v-6h-4v-7h-4v-7h-12v7h-4v7h-4z"/><path d="M4 16l12-26 12 26z"/>',
+    3: '<path d="M-22 16v-18h44v18h-14v-10a8 8 0 0 0-16 0v10z"/><path d="M-12 -2a12 12 0 0 1 24 0z"/>'
+  };
 
   function tahtaSayfasi() {
     const renk = { bilgi: '#2f6db5', kanit: '#2e8b57', krono: '#d99a17', kavram: '#c8463c', altin: '#c9a227' };
     const ad = { bilgi: 'BİLGİ', kanit: 'KANIT', krono: 'KRONOLOJİ', kavram: 'KAVRAM', altin: 'ALTIN' };
-    const bolgeRenk = ['', '#e6edf6', '#f8ebdc', '#e1f1ea'], bolgeCizgi = ['', '#3d5a80', '#b5651d', '#2a7f62'];
-    const konum = k => {
-      if (k === 0) return { x: 26, y: 42 };
-      if (k > 15) return { x: 254, y: 158 };
-      const satir = Math.floor((k - 1) / 5), sutun = (k - 1) % 5, s = satir === 1 ? 4 - sutun : sutun;
-      return { x: 64 + s * 40, y: 42 + satir * 58 };
-    };
-    let s = `<svg class="tahta-svg" viewBox="0 0 281 194" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial">`;
-    s += `<text x="140" y="11" font-family="Georgia" font-size="9" font-weight="700" text-anchor="middle">ZAMAN YOLU</text>`;
-    [1, 2, 3].forEach(u => {
-      const y = 42 + (u - 1) * 58;
-      s += `<rect x="40" y="${y - 25}" width="208" height="50" rx="6" fill="${bolgeRenk[u]}" stroke="${bolgeCizgi[u]}" stroke-width=".5"/>`;
-      s += `<text x="44" y="${y - 19}" font-size="4.2" font-weight="700" fill="${bolgeCizgi[u]}">${UNITELER[u].bolge.toLocaleUpperCase('tr')} · ÜNİTE ${u} · ${UNITELER[u].ad.toLocaleUpperCase('tr')}</text>`;
+    const bolgeRenk = ['', '#e8eef6', '#f7ebdd', '#e3f1ea'], bolgeCizgi = ['', '#3d5a80', '#b5651d', '#2a7f62'];
+    let s = `<svg class="tahta-svg" viewBox="0 0 500 362" xmlns="http://www.w3.org/2000/svg" font-family="Nunito, Segoe UI, Arial">
+      <defs><pattern id="dama" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#fff"/><rect width="4" height="4" fill="#1f2430"/><rect x="4" y="4" width="4" height="4" fill="#1f2430"/></pattern></defs>
+      <rect x="0" y="0" width="500" height="362" rx="16" fill="#fbf6ea" stroke="#e6d9bd" stroke-width="1"/>`;
+    // bölge şeritleri
+    SATIR_Y.forEach((y, i) => {
+      const u = i + 1, sag = u === 3;
+      s += `<rect x="8" y="${y - 54}" width="484" height="98" rx="14" fill="${bolgeRenk[u]}"/>`;
+      s += `<g transform="translate(${sag ? 300 : 200} ${y + 2}) scale(1.6)" fill="${bolgeCizgi[u]}" stroke="${bolgeCizgi[u]}" opacity=".08">${BOLGE_SIMGE[u]}</g>`;
+      const etiket = `${esc(UNITELER[u].bolge.toLocaleUpperCase('tr'))} · ÜNİTE ${u}`;
+      const ex = sag ? 484 : 16;
+      s += `<g transform="translate(${sag ? ex - 8 : ex + 8} ${y - 44}) scale(.3)" fill="${bolgeCizgi[u]}" stroke="${bolgeCizgi[u]}">${BOLGE_SIMGE[u]}</g>`;
+      s += `<text x="${sag ? ex - 20 : ex + 20}" y="${y - 40}" font-size="9" font-weight="800" letter-spacing=".06em" fill="${bolgeCizgi[u]}" text-anchor="${sag ? 'end' : 'start'}">${etiket}</text>`;
     });
-    let yol = '';
-    for (let k = 0; k <= 16; k++) { const p = konum(k); yol += (k ? ' L' : 'M') + p.x + ' ' + p.y; }
-    s += `<path d="${yol}" fill="none" stroke="#b9b2a2" stroke-width="1.2" stroke-dasharray="2 2"/>`;
-    for (let k = 1; k <= 15; k++) {
-      const p = konum(k), t = M.TAHTA[k].tur;
-      s += `<rect x="${p.x - 15}" y="${p.y - 15}" width="30" height="30" rx="4" fill="${renk[t]}"/>`;
-      s += `<text x="${p.x}" y="${p.y + (t === 'altin' ? 2 : 1)}" font-size="${t === 'altin' ? 11 : 9}" fill="#fff" text-anchor="middle" font-weight="700">${t === 'altin' ? '★' : k}</text>`;
-      s += `<text x="${p.x}" y="${p.y + 10}" font-size="3.4" fill="#fff" text-anchor="middle" font-weight="700">${ad[t]}</text>`;
+    // başlık (1. şeridin sağ üstü boş)
+    s += `<text x="484" y="41" font-size="13" font-weight="900" fill="#e65f7b" text-anchor="end" letter-spacing=".04em">⏳ ZAMAN YOLU</text>`;
+    // yol
+    const [y1, y2, y3] = SATIR_Y;
+    const yol = `M50 ${y1} H420 A50 50 0 0 1 420 ${y2} H80 A50 50 0 0 0 80 ${y3} H456`;
+    s += `<path d="${yol}" fill="none" stroke="#cdbb93" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>`;
+    s += `<path d="${yol}" fill="none" stroke="#efe3c6" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>`;
+    s += `<path d="${yol}" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="6 7"/>`;
+    // başla ve bitiş
+    const bas = kareKonumu(0), bit = kareKonumu(M.BITIS);
+    s += `<rect x="${bas.x - 30}" y="${bas.y - 17}" width="60" height="34" rx="17" fill="#1f2430"/>
+      <text x="${bas.x}" y="${bas.y + 4}" font-size="11" fill="#fff" text-anchor="middle" font-weight="800" letter-spacing=".05em">BAŞLA</text>`;
+    s += `<rect x="${bit.x - 28}" y="${bit.y - 22}" width="56" height="44" rx="10" fill="url(#dama)" stroke="#1f2430" stroke-width="2"/>
+      <rect x="${bit.x - 24}" y="${bit.y - 8}" width="48" height="16" rx="4" fill="#1f2430"/>
+      <text x="${bit.x}" y="${bit.y + 4}" font-size="10" fill="#fff" text-anchor="middle" font-weight="800" letter-spacing=".05em">BİTİŞ</text>`;
+    // kareler: numara ve kart türü yazılı, piyon sığsın diye biraz büyük
+    for (let k = 1; k <= M.KARE_SAYISI; k++) {
+      const p = kareKonumu(k), t = M.TAHTA[k].tur;
+      if (t === 'altin') {
+        s += `<circle cx="${p.x}" cy="${p.y}" r="24" fill="${renk.altin}" stroke="#fff" stroke-width="3"/>
+          <circle cx="${p.x}" cy="${p.y}" r="27" fill="none" stroke="${renk.altin}" stroke-width="1.2"/>
+          <text x="${p.x}" y="${p.y + 3}" font-size="19" fill="#fff" text-anchor="middle">★</text>
+          <text x="${p.x}" y="${p.y + 14}" font-size="5.5" fill="#fff" text-anchor="middle" font-weight="800" letter-spacing=".05em">ALTIN +1</text>
+          <circle cx="${p.x + 18}" cy="${p.y - 18}" r="8" fill="#fff" stroke="#b8891a" stroke-width="1.5"/>
+          <text x="${p.x + 18}" y="${p.y - 14.5}" font-size="9" fill="#8a6510" text-anchor="middle" font-weight="800">${k}</text>`;
+      } else {
+        s += `<circle cx="${p.x}" cy="${p.y}" r="22" fill="${renk[t]}" stroke="#fff" stroke-width="3"/>
+          <text x="${p.x}" y="${p.y + 3}" font-size="15" fill="#fff" text-anchor="middle" font-weight="800">${k}</text>
+          <text x="${p.x}" y="${p.y + 13}" font-size="${t === 'krono' ? 4.6 : 5.5}" fill="#fff" text-anchor="middle" font-weight="800" letter-spacing="${t === 'krono' ? 0 : '.04em'}">${ad[t]}</text>`;
+      }
     }
-    [[0, 'BAŞLA'], [16, 'BİTİŞ']].forEach(([k, yazi]) => {
-      const p = konum(k);
-      s += `<rect x="${p.x - 17}" y="${p.y - 13}" width="34" height="26" rx="4" fill="#1f2430"/><text x="${p.x}" y="${p.y + 2}" font-size="6" fill="#fff" text-anchor="middle" font-weight="700">${yazi}</text>`;
+    // açıklama
+    const lejant = [['bilgi', 'Bilgi'], ['kanit', 'Kanıt'], ['krono', 'Kronoloji'], ['kavram', 'Kavram'], ['altin', '★ Altın (+1)']];
+    lejant.forEach(([t, yazi], i) => {
+      const x = 40 + i * 88;
+      s += `<circle cx="${x}" cy="346" r="6" fill="${renk[t]}"/><text x="${x + 11}" y="350" font-size="10.5" fill="#5b6170">${yazi}</text>`;
     });
-    s += `<text x="140" y="190" font-size="4" text-anchor="middle" fill="#5b6170">Kare rengi kart türünü, bölge üniteyi belirler · ★ Altın kare: doğruysa +1 kare daha · BİTİŞ için karışık son soru</text>`;
-    return `<div class="sayfa yatay">${s}</svg><div class="sayfa-etiket">Oyun tahtası · A4 yatay (A3’e büyütülerek de basılabilir)</div></div>`;
+    return `<div class="sayfa yatay">${s}</svg><div class="sayfa-etiket">Kare rengi kart türünü, bölge üniteyi belirler · ★ Altın kare: doğruysa +1 kare daha · BİTİŞ için karışık son soru · A4 yatay (A3’e büyütülerek de basılabilir)</div></div>`;
   }
 
   function kuralSayfasi() {
     return `<div class="sayfa"><div class="kurallar">
       <h2>Zaman Yolu · Kurallar</h2>
-      <p>9. sınıf tarih dersi için soru kartı oyunu · 2 oyuncu veya 2 takım · yaklaşık 20 dakika</p>
+      <p class="alt-baslik">9. sınıf tarih dersi için soru kartı oyunu · 2 oyuncu veya 2 takım · yaklaşık 20 dakika</p>
       <h3>Hazırlık</h3>
       <ul>
         <li>Kartları <b>ünite ve türe göre</b> 15 desteye ayırın (her ünite için Bilgi, Kanıt, Kronoloji, Kavram, Altın). Desteleri karıştırıp ters koyun.</li>
@@ -214,20 +250,23 @@
         <li>İki taraf aynı anda <b>taş-kağıt-makas</b> yapar. Berabere biterse tekrar edilir.</li>
         <li><b>Kazanan</b> piyonunu 1 kare ileri koyar. O karenin <b>rengindeki</b> ve <b>bölgesinin ünitesindeki</b> desteden kart çekilir. Kartı <b>rakip okur</b> ve kum saatini çevirir.</li>
         <li><b>Doğru cevap:</b> piyon o karede kalır.</li>
-        <li><b>Yanlış cevap veya süre biterse:</b> piyon geri alınır. Soru <b>rakibe geçer</b>; rakip bilirse kendi piyonunu 1 kare ilerletir.</li>
+        <li><b>Yanlış cevap veya süre biterse:</b> piyon geri alınır. Soru <b>rakibe geçer</b> ve kum saati yeniden çevrilir; rakip bilirse kendi piyonunu 1 kare ilerletir. (Rakibe geçen soruyla en fazla 15. kareye gelinir, BİTİŞ’e geçilmez.)</li>
         <li>Kartın arkasındaki açıklama yüksek sesle okunur, kart destenin altına konur.</li>
       </ol>
       <h3>Özel kurallar</h3>
       <ul>
         <li><span class="renk" style="background:#c9a227"></span><b>Altın kare (★):</b> Altın Soru destesinden kart çekilir. Doğru cevapta piyon <b>+1 kare daha</b> ilerler (toplam 2 kare). Yanlışta soru rakibe <b>geçmez</b>.</li>
-        <li><b>BİTİŞ:</b> 15. karedeki oyuncu taş-kağıt-makası kazanınca herhangi bir ünitenin Bilgi veya Kanıt destesinden son soru çekilir. Bilirse BİTİŞ’e geçer ve <b>kazanır</b>; bilemezse yerinde kalır.</li>
-        <li><b>📖 Kitaba Bak:</b> 20 saniye boyunca ders kitabında kartın ön yüzündeki konuya bakılır. Bu süre kum saatine eklenir.</li>
-        <li><b>🔄 Takas:</b> Kart bir kenara konur, aynı desteden yeni kart çekilir. Rakibe geçen soruda kullanılamaz.</li>
+        <li><b>BİTİŞ:</b> 15. karedeki oyuncu taş-kağıt-makası kazanınca herhangi bir ünitenin Bilgi veya Kanıt destesinden son soru çekilir. Bilirse BİTİŞ’e geçer ve <b>kazanır</b>; bilemezse yerinde kalır ve soru rakibe geçmez.</li>
+        <li><b>Jokerler</b> (her oyuncu veya takım her birini oyunda <b>1 kez</b> kullanır):
+          <ul>
+            <li><b>📖 Kitaba Bak:</b> Ders kitabında kartın ön yüzünde yazan konuya bakılır. Süreye <b>+20 saniye</b> eklenir.</li>
+            <li><b>🔄 Takas:</b> Kart bir kenara konur, aynı desteden yeni kart çekilir ve kum saati yeniden çevrilir. <b>Rakibe geçen soruda kullanılamaz.</b></li>
+          </ul></li>
         <li><span class="renk" style="background:#c8463c"></span><b>Kavram kartı:</b> Takım oyununda kavram, yasaklı kelimeler söylenmeden takım arkadaşına 1 dakikada anlatılır. Teke tek oyunda rakip kartın arkasındaki tanımı okur, oyuncu kavramı bulur.</li>
       </ul>
       <h3>Kart türleri</h3>
       <p><span class="renk" style="background:#2f6db5"></span>Bilgi &nbsp; <span class="renk" style="background:#2e8b57"></span>Kanıt (kaynaktan bilgi çıkarma) &nbsp; <span class="renk" style="background:#d99a17"></span>Kronoloji (sıralama) &nbsp; <span class="renk" style="background:#c8463c"></span>Kavram &nbsp; <span class="renk" style="background:#c9a227"></span>Altın (zor)</p>
-      <p style="color:#5b6170;font-size:9.5pt">Tüm sorular MEB 9. Sınıf Tarih Ders Kitabı’na dayanır; her kartın arkasında kitap sayfası ve kartı web’de açan QR kod bulunur. Web sürümü aynı kurallarla tek cihazda, bilgisayara karşı veya özel linkle iki cihazda oynanabilir.</p>
+      <p style="color:#5b6170;font-size:9.5pt">Tüm sorular MEB 9. Sınıf Tarih Ders Kitabı’na dayanır; her kartın arkasında cevabın bulunduğu kitap sayfası yazar. Web sürümü aynı kurallarla tek cihazda, bilgisayara karşı veya özel linkle iki cihazda oynanabilir.</p>
     </div><div class="sayfa-etiket">Kural sayfası</div></div>`;
   }
 
@@ -237,13 +276,13 @@
     h += kartSayfalari(sirali.map(on), sirali.map(arka), 'Soru kartları');
     const jokerler = [];
     for (let i = 0; i < 2; i++) {
-      jokerler.push(jokerKart('📖', 'Kitaba Bak', 'Ders kitabında kartın konusuna 20 saniye bakabilirsin. Süre kum saatine eklenir.', '#3d5a80'));
-      jokerler.push(jokerKart('🔄', 'Takas', 'Kartı bir kenara koy, aynı desteden yeni kart çek.', '#7a5c2e'));
+      jokerler.push(jokerKart('📖', 'Kitaba Bak', 'Ders kitabında kartın konusuna bakabilirsin. Süreye +20 saniye eklenir.', 'var(--ana)'));
+      jokerler.push(jokerKart('🔄', 'Takas', 'Kartı bir kenara koy, aynı desteden yeni kart çek. Rakibe geçen soruda kullanılamaz.', 'var(--lila)'));
     }
     h += kartSayfalari(jokerler, jokerler.map(jokerArka), 'Joker kartları');
     document.getElementById('sayfalar').innerHTML = h;
-    sigdir();
-    qrlariCiz();
+    // Nunito yüklenince ölç; internetsizken sistem yazı tipiyle hemen ölçülür
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(sigdir);
   }
 
   // Taşan kartlarda yazıyı küçült
@@ -258,19 +297,6 @@
     });
   }
 
-  function qrlariCiz() {
-    const adres = document.getElementById('adres').value.trim().replace(/\/?$/, '/');
-    if (typeof QRCode === 'undefined') return;
-    document.querySelectorAll('.qr').forEach(el => {
-      el.innerHTML = '';
-      new QRCode(el, { text: adres + 'index.html?kart=' + el.dataset.kart, width: 128, height: 128, correctLevel: QRCode.CorrectLevel.M });
-    });
-  }
-
-  document.getElementById('uygula').onclick = () => {
-    try { localStorage.setItem('zamanyolu-adres', document.getElementById('adres').value.trim()); } catch (e) { /* yok */ }
-    qrlariCiz();
-  };
   ciz();
 </script>
 </body>

@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- İnternet yoksa yazı tipi yüklenmez, oyun sistem yazı tipiyle çalışmaya devam eder -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
-<link rel="stylesheet" href="stil.css">
+<link rel="stylesheet" href="stil.css?v=3">
 </head>
 <body>
 
@@ -24,11 +24,27 @@
 <!-- ANA MENÜ -->
 <section id="ana" class="ekran">
   <div class="hero">
-    <div class="hero-sol" aria-hidden="true">
-      <div class="balon">⏳</div>
-      <div class="balon-nokta n1"></div><div class="balon-nokta n2"></div>
-      <svg class="hero-piyon" viewBox="-14 -28 28 32"><path d="M-8 0 Q-8 -4 -5 -5 L-3 -12 Q-7 -14 -6 -19 Q-4 -24 0 -24 Q4 -24 6 -19 Q7 -14 3 -12 L5 -5 Q8 -4 8 0 Z" fill="#ff7a93" stroke="#fff" stroke-width="1.5"/><circle cx="-2" cy="-20" r="1.8" fill="#fff" opacity=".6"/></svg>
-    </div>
+    <!-- pusula gülü: sol alt köşede, kutunun kenarlarından kesilir -->
+    <svg class="hero-sol" viewBox="-100 -100 200 200" aria-hidden="true" fill="none" stroke="url(#pusula-renk)" stroke-linejoin="round">
+      <defs>
+        <linearGradient id="pusula-renk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7a93"/><stop offset="1" stop-color="#a07cf0"/></linearGradient>
+        <g id="pusula-uc"><path d="M0 0L0 -84L-9.9 -9.9Z" fill="url(#pusula-renk)" fill-opacity=".55"/><path d="M0 0L0 -84L9.9 -9.9Z"/></g>
+        <g id="pusula-ara"><path d="M0 0L0 -54L-7 -7Z" fill="url(#pusula-renk)" fill-opacity=".35"/><path d="M0 0L0 -54L7 -7Z"/></g>
+      </defs>
+      <circle r="97" stroke-width="2"/>
+      <circle r="92" stroke-width="8" stroke-dasharray="0.8 7.23"/>
+      <circle r="91" stroke-width="11" stroke-dasharray="1.6 46.05" stroke-dashoffset=".8"/>
+      <circle r="86" stroke-width="1.2"/>
+      <circle r="62" stroke-width="1" stroke-dasharray="3 4"/>
+      <circle r="30" stroke-width="1"/>
+      <g stroke-width="1.4">
+        <use href="#pusula-ara" transform="rotate(45)"/><use href="#pusula-ara" transform="rotate(135)"/>
+        <use href="#pusula-ara" transform="rotate(225)"/><use href="#pusula-ara" transform="rotate(315)"/>
+        <use href="#pusula-uc"/><use href="#pusula-uc" transform="rotate(90)"/>
+        <use href="#pusula-uc" transform="rotate(180)"/><use href="#pusula-uc" transform="rotate(270)"/>
+      </g>
+      <circle r="5" stroke-width="1.4" fill="#fff4f0"/>
+    </svg>
     <h1>Tarihte bir yolculuğa<br><span>hazır mısın?</span></h1>
     <p>9. Sınıf Tarih dersi için taş-kağıt-makaslı soru kartı oyunu</p>
     <div class="hero-cipler"><span>🗺️ 3 ünite</span><span>⭐ Altın kareler</span><span>⏱️ ~20 dakika</span></div>
@@ -130,9 +146,9 @@
   </div>
 </section>
 
-<script src="sorular.js"></script>
-<script src="oyun-motoru.js"></script>
-<script src="ag.js"></script>
-<script src="oyun.js"></script>
+<script src="sorular.js?v=3"></script>
+<script src="oyun-motoru.js?v=3"></script>
+<script src="ag.js?v=3"></script>
+<script src="oyun.js?v=3"></script>
 </body>
 </html>
