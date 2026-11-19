@@ -13,7 +13,7 @@
 | Dosya | Görevi |
 |---|---|
 | `sorular.js` | **Tek soru bankası.** Web oyunu da basılı kartlar da buradan beslenir. |
-| `oyun-motoru.js` | Oyun kuralları (taş-kağıt-makas, altın kare, jokerler, süre, kazanma). Ekrandan ve ağdan bağımsızdır. |
+| `oyun-motoru.js` | Oyun kuralları (başlangıç taş-kağıt-makası, sıra, altın kare, jokerler, süre, kazanma). Ekrandan ve ağdan bağımsızdır. |
 | `oyun.js` | Ekranlar: menü, tahta, kartlar, pratik, kayıtlar, tek kart (`?kart=ID`). |
 | `ag.js` | Özel link modu (PeerJS / WebRTC). Yalnızca bu mod seçilince yüklenir. |
 | `index.html`, `stil.css` | Oyun sayfası ve görünümü. |
@@ -44,10 +44,10 @@ Bir ünitedeki her kart türünden en az birkaç kart bulunmalıdır; oyun o tü
 
 2 oyuncu veya 2 takım · 15 kare, 3 bölge (her bölge bir ünite) · zar yok.
 
-1. İki taraf taş-kağıt-makas yapar; kazanan 1 kare ilerleyip o karenin rengindeki kartı cevaplar (30 sn).
+1. Oyun başında bir kez taş-kağıt-makas yapılır; kazanan başlar, sonra sırayla oynanır. Sırası gelen 1 kare ilerleyip o karenin rengindeki kartı cevaplar (30 sn).
 2. Yanlış veya süre biterse piyon geri alınır, soru rakibe geçer; rakip bilirse kendi piyonunu 1 kare ilerletir.
 3. Altın kare (3., 8., 13. kareler): zor soru; doğruysa +1 kare daha; yanlışta rakibe geçmez.
-4. BİTİŞ: 15. karedeki oyuncu taş-kağıt-makası kazanınca karışık bir son soru gelir; bilirse kazanır.
+4. BİTİŞ: 15. karedeki oyuncunun sırası gelince karışık bir son soru gelir; bilirse kazanır.
 5. Jokerler (birer kez): Kitaba Bak (+20 sn, kartın konusu gösterilir), Takas (kart değişir).
 
 ## Veriler ve gizlilik

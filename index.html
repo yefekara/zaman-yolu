@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- İnternet yoksa yazı tipi yüklenmez, oyun sistem yazı tipiyle çalışmaya devam eder -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
-<link rel="stylesheet" href="stil.css?v=3">
+<link rel="stylesheet" href="stil.css?v=4">
 </head>
 <body>
 
@@ -46,7 +46,7 @@
       <circle r="5" stroke-width="1.4" fill="#fff4f0"/>
     </svg>
     <h1>Tarihte bir yolculuğa<br><span>hazır mısın?</span></h1>
-    <p>9. Sınıf Tarih dersi için taş-kağıt-makaslı soru kartı oyunu</p>
+    <p>9. Sınıf Tarih dersi için soru kartı oyunu</p>
     <div class="hero-cipler"><span>🗺️ 3 ünite</span><span>⭐ Altın kareler</span><span>⏱️ ~20 dakika</span></div>
     <div class="hero-sag" aria-hidden="true">
       <span style="top:8%;left:62%">📜</span><span style="top:16%;left:18%">🏛️</span><span style="top:30%;left:70%">⚱️</span>
@@ -81,7 +81,7 @@
       <input id="ad1" maxlength="20" value="Mavi Takım">
       <div class="renk-secici" id="renk1" aria-label="2. oyuncunun piyon rengi"></div>
     </div>
-    <p class="not" id="tus-notu">Aynı cihazda taş-kağıt-makas seçimleri ekranın iki yarısından yapılır. Klavyede 1. oyuncu <b>A S D</b>, 2. oyuncu <b>J K L</b> tuşlarını kullanabilir; böylece seçim gizli kalır.</p>
+    <p class="not" id="tus-notu">Aynı cihazda başlangıçtaki taş-kağıt-makas seçimleri ekranın iki yarısından yapılır. Klavyede 1. oyuncu <b>A S D</b>, 2. oyuncu <b>J K L</b> tuşlarını kullanabilir; böylece seçim gizli kalır.</p>
     <button id="oyunu-baslat">Oyunu Başlat</button>
   </div>
 </section>
@@ -129,11 +129,11 @@
   <div class="panel">
     <p><b>Amaç:</b> BİTİŞ’e ilk ulaşan oyuncu veya takım kazanır. Tahtada 15 kare ve 3 bölge vardır: Tarihçinin Atölyesi (Ünite 1), Eski Çağ (Ünite 2), İpek Yolu (Ünite 3).</p>
     <ol>
-      <li>İki taraf aynı anda <b>taş-kağıt-makas</b> seçer. Berabere biterse tekrar edilir.</li>
-      <li>Kazanan piyonunu <b>1 kare</b> ileri koyar ve o karenin rengindeki, o bölgenin ünitesine ait kartı cevaplar. Süre <b>30 saniyedir</b>.</li>
-      <li><b>Doğru:</b> piyon o karede kalır. <b>Yanlış veya süre biterse:</b> piyon geri alınır, soru rakibe geçer; rakip bilirse kendi piyonunu 1 kare ilerletir.</li>
+      <li>Oyun başında iki taraf aynı anda <b>taş-kağıt-makas</b> seçer; kazanan ilk turu oynar. Sonra <b>sırayla</b> oynanır.</li>
+      <li>Sırası gelen piyonunu <b>1 kare</b> ileri koyar ve o karenin rengindeki, o bölgenin ünitesine ait kartı cevaplar. Süre <b>30 saniyedir</b>.</li>
+      <li><b>Doğru:</b> piyon o karede kalır. <b>Yanlış veya süre biterse:</b> piyon geri alınır, soru rakibe geçer; rakip bilirse kendi piyonunu 1 kare ilerletir. Sonraki tur yine rakibindir.</li>
       <li><b>Altın kare (★):</b> daha zor bir soru gelir. Doğru cevapta <b>+1 kare daha</b> ilerlenir. Yanlışta soru rakibe geçmez.</li>
-      <li><b>BİTİŞ’e geçmek</b> için son karede taş-kağıt-makası kazanıp tüm ünitelerden karışık gelen son soruyu bilmek gerekir.</li>
+      <li><b>BİTİŞ’e geçmek</b> için 15. karede sıra gelince tüm ünitelerden karışık gelen son soruyu bilmek gerekir.</li>
       <li><b>Jokerler</b> (her biri 1 kez): 📖 <b>Kitaba Bak</b> kartın konusunu gösterir ve süreye 20 saniye ekler. 🔄 <b>Takas</b> kartı değiştirir.</li>
     </ol>
     <p><b>Kart türleri:</b>
@@ -146,9 +146,9 @@
   </div>
 </section>
 
-<script src="sorular.js?v=3"></script>
-<script src="oyun-motoru.js?v=3"></script>
-<script src="ag.js?v=3"></script>
-<script src="oyun.js?v=3"></script>
+<script src="sorular.js?v=4"></script>
+<script src="oyun-motoru.js?v=4"></script>
+<script src="ag.js?v=4"></script>
+<script src="oyun.js?v=4"></script>
 </body>
 </html>

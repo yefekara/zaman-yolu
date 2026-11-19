@@ -245,6 +245,8 @@ th { background: var(--ana-acik) }
 .perde-ikon.berabere { background: #7d828c }
 .perde-ikon.firsat { background: #e0a20f; box-shadow: 0 0 0 10px rgba(224, 162, 15, .18) }
 .perde-yazi.firsat { color: #fff; background: #e0a20f; box-shadow: 0 6px 22px rgba(224, 162, 15, .35) }
+.perde-ikon.sira { box-shadow: 0 0 0 10px rgba(0, 0, 0, .06) }
+.perde-yazi.sira { color: #fff; box-shadow: 0 6px 22px rgba(0, 0, 0, .15) }
 .tkm-perde > .el-ad { font-weight: 700; animation: kayarak-gel .3s .2s both }
 .tkm-perde .perde-ikon + .el-ad + .perde-yazi { animation-delay: .25s }
 .tkm-perde .perde-ikon ~ .perde-alt { animation-delay: .5s }

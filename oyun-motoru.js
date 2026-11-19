@@ -5,7 +5,8 @@
 (function (kok) {
   const SORU_SURESI = 30000;      // ms
   const KITAP_EK_SURE = 20000;    // Kitaba Bak jokeri
-  const TKM_GOSTERIM = 2600;      // taş-kağıt-makas sonucu ekranda kalır, soru süresi sonra başlar
+  const TKM_GOSTERIM = 2600;      // başlangıçtaki taş-kağıt-makas sonucu ekranda kalır, soru süresi sonra başlar
+  const SIRA_GOSTERIM = 1500;     // "Sıra X'te" ekranda kalır, soru süresi sonra başlar
   const CEVAP_GOSTERIM = 1800;    // "Yanlış! Soru rakibe geçti" ekranda kalır, rakibin süresi sonra başlar
   const KARE_SAYISI = 15;
   const BITIS = KARE_SAYISI + 1;
@@ -55,12 +56,12 @@
       oyuncular: adlar.map(ad => ({ ad, konum: 0, jokerler: { kitap: true, takas: true }, seri: 0 })),
       desteler: desteleriKur(sorular, rastgele),
       kullanilan: {},          // deste anahtarı -> o desteden çekilen kart sayısı
-      faz: 'tkm',              // tkm | soru | sonuc | bitti
+      faz: 'tkm',              // tkm (yalnızca başta, ilk başlayanı seçer) | soru | sonuc | bitti
       tkm: [null, null],
       sonTkm: null,            // { secimler, kazanan }
       tkmSayac: 0,             // biten taş-kağıt-makas sayısı (ekran sonucu bir kez göstersin diye)
       aktif: null,             // soruyu cevaplayan oyuncu
-      hamleSahibi: null,       // taş-kağıt-makası kazanan oyuncu
+      hamleSahibi: null,       // sırası gelen oyuncu
       hedef: null,             // hamle sahibinin gideceği kare
       kart: null,
       pas: false,              // soru rakibe geçti mi
@@ -85,6 +86,19 @@
     d.kitapAcik = false;
     d.sureBitis = simdi + SORU_SURESI;
     d.soruBaslangic = simdi;
+  }
+
+  // Sırası gelen oyuncu 1 kare ilerleyecek; o karenin kartı çekilir
+  function turBaslat(d, oyuncu, simdi) {
+    d.tur++;
+    d.hamleSahibi = oyuncu;
+    d.aktif = oyuncu;
+    d.hedef = d.oyuncular[oyuncu].konum + 1;
+    d.pas = false;
+    d.sonuc = null;
+    d.kitapAcik = false;
+    d.kart = kartCek(d, desteAnahtari(d.hedef));
+    soruBaslat(d, simdi);
   }
 
   function cevapla(d, oyuncu, secilen, sorular, simdi) {
@@ -135,14 +149,7 @@
           d.tkmSayac = (d.tkmSayac || 0) + 1;
           d.tkm = [null, null];
           if (kazanan === null) return d;          // beraberlik: tekrar
-          d.tur++;
-          d.hamleSahibi = kazanan;
-          d.aktif = kazanan;
-          d.hedef = d.oyuncular[kazanan].konum + 1;
-          d.pas = false;
-          d.sonuc = null;
-          d.kart = kartCek(d, desteAnahtari(d.hedef));
-          soruBaslat(d, simdi + TKM_GOSTERIM);
+          turBaslat(d, kazanan, simdi + TKM_GOSTERIM);
         }
         return d;
       }
@@ -175,8 +182,8 @@
       case 'devam': {
         if (d.faz !== 'sonuc') return durum;
         if (d.kazanan !== null) { d.faz = 'bitti'; return d; }
-        d.faz = 'tkm';
-        d.kart = null; d.aktif = null; d.hedef = null; d.pas = false; d.kitapAcik = false;
+        // sıra, bu turu oynayanın rakibine geçer (soru rakibe geçmiş olsa da)
+        turBaslat(d, 1 - d.hamleSahibi, simdi + SIRA_GOSTERIM);
         return d;
       }
     }
@@ -190,7 +197,7 @@
     return d;
   }
 
-  const motor = { yeniOyun, uygula, maskele, TAHTA, BITIS, KARE_SAYISI, SORU_SURESI, KITAP_EK_SURE, TKM_GOSTERIM, CEVAP_GOSTERIM, TKM_YENER, desteAnahtari };
+  const motor = { yeniOyun, uygula, maskele, TAHTA, BITIS, KARE_SAYISI, SORU_SURESI, KITAP_EK_SURE, TKM_GOSTERIM, SIRA_GOSTERIM, CEVAP_GOSTERIM, TKM_YENER, desteAnahtari };
   if (typeof module !== 'undefined') module.exports = motor;
   else kok.ZamanYoluMotor = motor;
 })(this);

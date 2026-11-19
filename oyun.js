@@ -41,7 +41,7 @@
   let benimRengim = '';
   let gosterilenTkm = null;     // ekranda sonucu gösterilen son taş-kağıt-makas (durum.tkmSayac)
   let gosterilenCevap = 0;      // ekranda sonucu gösterilen cevap sayısı (durum.kayit.length)
-  let botKayipSerisi = 0;       // bilgisayara karşı üst üste kaybedilen taş-kağıt-makas sayısı
+  let gosterilenTur = 0;        // ekranda "Sıra X'te" gösterilen son tur (durum.tur)
   let perdeAcik = false;
   let perdeZamanlayici = null;
   let sonPanelAnahtari = '';
@@ -118,7 +118,6 @@
     kopukMesaj = null;
     perdeyiKapat();
     gosterilenTkm = null;
-    botKayipSerisi = 0;
     ekranGoster('oyun');
     durumDegisti();
   }
@@ -152,18 +151,17 @@
     clearTimeout(botZamanlayici);
     if (mod !== 'bot' || !durum) return;
     if (durum.faz === 'tkm' && durum.tkm[0] && !durum.tkm[1]) {
-      // Bilgisayar normalde rastgele seçer. Oyuncu üst üste kaybettikçe her kayıp için %20
-      // (en çok %60) olasılıkla bilerek kaybeden hamleyi seçer; oyuncu kazanınca yardım sıfırlanır.
-      // Oyuncunun kazanma şansı: 0 kayıp %33 · 1 kayıp %47 · 2 kayıp %60 · 3+ kayıp %73
-      // Seçim hemen yapılır, böylece oyuncu "rakip bekleniyor" ekranında beklemez.
-      const yardim = Math.min(0.6, 0.2 * botKayipSerisi);
-      const s = Math.random() < yardim ? M.TKM_YENER[durum.tkm[0]] : Object.keys(TKM)[Math.floor(Math.random() * 3)];
-      eylem({ tip: 'tkm', oyuncu: 1, secim: s });
+      // Başlangıçtaki taş-kağıt-makasta bilgisayar rastgele seçer. Seçim hemen yapılır,
+      // böylece oyuncu "rakip bekleniyor" ekranında beklemez.
+      eylem({ tip: 'tkm', oyuncu: 1, secim: Object.keys(TKM)[Math.floor(Math.random() * 3)] });
     } else if (durum.faz === 'soru' && durum.aktif === 1) {
       const gosterim = Math.max(0, durum.soruBaslangic - Date.now());
       botZamanlayici = setTimeout(() => {
         const q = soruBul(durum.kart);
-        const dogru = Math.random() < 0.6;
+        // Bilgisayar soruların %60'ını bilir. Oyuncudan öndeyse her kare fark için %5 daha az
+        // bilir (en az %40): 1 kare önde %55 · 2 kare %50 · 4+ kare %40
+        const fark = Math.max(0, durum.oyuncular[1].konum - durum.oyuncular[0].konum);
+        const dogru = Math.random() < Math.max(0.4, 0.6 - 0.05 * fark);
         const secilen = dogru ? q.cevap : (q.cevap + 1 + Math.floor(Math.random() * 3)) % 4;
         eylem({ tip: 'cevap', oyuncu: 1, secilen });
       }, gosterim + 2500 + Math.random() * 2500);
@@ -194,16 +192,20 @@
     paneliCiz();
   }
 
-  // ─── sonuç perdesi: taş-kağıt-makas ve cevap sonuçları kartın önünde büyük gösterilir ───
+  // ─── sonuç perdesi: taş-kağıt-makas, sıra ve cevap sonuçları kartın önünde büyük gösterilir ───
   function perdeleriDenetle() {
-    const n = durum.tkmSayac || 0, c = durum.kayit.length;
-    if (gosterilenTkm === null || n < gosterilenTkm || c < gosterilenCevap) {   // oyuna yeni girildi
-      gosterilenTkm = n; gosterilenCevap = c; return;
+    const n = durum.tkmSayac || 0, c = durum.kayit.length, t = durum.tur;
+    if (gosterilenTkm === null || n < gosterilenTkm || c < gosterilenCevap || t < gosterilenTur) {   // oyuna yeni girildi
+      gosterilenTkm = n; gosterilenCevap = c; gosterilenTur = t; return;
     }
     if (n > gosterilenTkm && durum.sonTkm) {
       gosterilenTkm = n;
-      if (mod === 'bot') botKayipSerisi = durum.sonTkm.kazanan === 1 ? botKayipSerisi + 1 : (durum.sonTkm.kazanan === 0 ? 0 : botKayipSerisi);
+      gosterilenTur = t;                 // ilk turun sırası taş-kağıt-makas perdesinde yazar
       tkmSonucunuGoster(durum.sonTkm);
+    }
+    if (t > gosterilenTur && durum.faz === 'soru') {
+      gosterilenTur = t;
+      siraGoster();
     }
     if (c > gosterilenCevap && durum.sonuc) {
       gosterilenCevap = c;
@@ -271,6 +273,16 @@
       <div class="perde-yazi ${sinif}">${yazi}</div><div class="perde-alt">${alt}</div>`;
   }
 
+  function siraGoster() {
+    const i = durum.aktif, h = durum.hedef;
+    const yazi = mod === 'yerel' ? 'Sıra sizde!' : (benimMi(i) ? 'Sıra sende!' : 'Sıra rakipte');
+    const alt = h >= M.BITIS ? 'BİTİŞ sorusu' : h + '. karenin sorusu' + (M.TAHTA[h].tur === 'altin' ? ' · Altın soru ★' : '');
+    perdeAc(`<div class="perde-ikon sira" style="background:${renk(i)}">➜</div>
+      <div class="el-ad" style="color:${renk(i)}">${esc(durum.oyuncular[i].ad)}</div>
+      <div class="perde-yazi sira" style="background:${renk(i)}">${yazi}</div><div class="perde-alt">${alt}</div>`,
+      Math.max(1000, durum.soruBaslangic - simdi()));
+  }
+
   function tkmSonucunuGoster(s) {
     const ad = i => esc(durum.oyuncular[i].ad);
     const k = s.kazanan;
@@ -282,7 +294,7 @@
       else if (benimMi(k)) { yazi = 'Kazandın!'; sinif = 'kazandi'; }
       else { yazi = 'Kaybettin!'; sinif = 'kaybetti'; }
       const hedef = durum.oyuncular[k].konum + 1;
-      alt = `${ad(k)} ${hedef >= M.BITIS ? 'BİTİŞ sorusunu' : hedef + '. karenin sorusunu'} cevaplayacak`;
+      alt = `${ad(k)} oyuna başlıyor ve ${hedef}. karenin sorusunu cevaplayacak. Sonra sırayla oynanır.`;
     }
     const el = i => {
       const durumSinifi = k === null ? '' : (k === i ? 'kazanan-el' : 'kaybeden-el');
@@ -468,9 +480,9 @@
     if (d.faz === 'tkm') {
       if (d.sonTkm) {
         const [a, b] = d.sonTkm.secimler;
-        h += `<div class="tkm-sonuc">Son tur: ${ad(0)} ${TKM[a].ikon} — ${TKM[b].ikon} ${ad(1)} → ${d.sonTkm.kazanan === null ? '<b>Berabere, tekrar!</b>' : '<b>' + ad(d.sonTkm.kazanan) + ' kazandı</b>'}</div>`;
+        h += `<div class="tkm-sonuc">${ad(0)} ${TKM[a].ikon} — ${TKM[b].ikon} ${ad(1)} → <b>Berabere, tekrar!</b></div>`;
       }
-      h += '<div class="durum-yazi">Taş, kağıt, makas! Kazanan 1 kare ilerleyip soruyu cevaplar.</div>';
+      h += '<div class="durum-yazi">Kim başlayacak? Taş, kağıt, makas! Kazanan ilk turu oynar, sonra sırayla devam edilir.</div>';
       const taraflar = mod === 'yerel' ? [0, 1] : [mod === 'misafir' ? 1 : 0];
       h += `<div class="tkm-alan ${taraflar.length === 1 ? 'tek' : ''}">` + taraflar.map(i => {
         const tuslar = i === 0 ? 'A · S · D' : 'J · K · L';
