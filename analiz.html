@@ -42,7 +42,7 @@
     @page { size: A4; margin: 12mm }
     body { font-size: 11px; }
     main { max-width: none; padding: 0; }
-    #geri, #giris, #birak, #bu-cihaz-satir, #mod-satir, #isaretli-etiket, #dosya-ipucu, button { display: none !important; }
+    #geri, #giris, #bos-ipucu, #birak, #bu-cihaz-satir, #mod-satir, #isaretli-etiket, #dosya-ipucu, #yazdir-satir, button { display: none !important; }
     #baski-bas { display: block; margin-bottom: 6px; }
     .kutu { border: none; padding: 0; margin: 4px 0; }
     select { border: none; appearance: none; padding: 0; background: none; }
@@ -67,6 +67,7 @@
     <input type="file" id="dosya" accept=".csv,text/csv" multiple class="gizli">
     <div class="not">Web oyunundan indirilen kayıtlar veya basılı oyun formlarının girildiği şablon (birden çok dosya seçilebilir)</div>
   </div>
+  <p id="bos-ipucu" class="not">Önce kayıt ekleyin: sonuçlar ve “PDF olarak kaydet” butonu kayıt eklenince görünür.</p>
   <p id="bu-cihaz-satir" class="gizli">Bu cihazda <b id="bu-cihaz-sayi"></b> oyun kaydı var. <button type="button" class="ikincil" id="bu-cihaz">Bu cihazdaki kayıtları ekle</button></p>
   <p id="sorular-hata" class="hata gizli">Kart bilgileri okunamadı. Bu sayfa sorular.js ile aynı klasörde (zaman-yolu) durmalı.</p>
 
@@ -80,6 +81,8 @@
   </div>
 
   <div id="sonuc" class="gizli">
+    <p id="yazdir-satir" style="margin:16px 0 0"><button id="yazdir" style="font-size:16px;padding:9px 18px">📄 Sonuçları PDF olarak kaydet</button>
+      <span class="not">Açılan pencerede yazıcı olarak “PDF olarak kaydet”i seçin.</span></p>
     <h2>Özet</h2>
     <div class="ozet" id="ozet"></div>
 
@@ -95,7 +98,6 @@
       <label>Ünite: <select id="kart-unite"><option value="">Tümü</option><option>1</option><option>2</option><option>3</option></select></label>
       <label id="isaretli-etiket"><input type="checkbox" id="yalniz-isaretli"> Yalnızca işaretli kartlar</label>
       <button id="indir">Kart tablosunu indir (CSV)</button>
-      <button id="yazdir">Sonuçları PDF olarak kaydet</button>
     </div>
     <p class="not">İşaretler (en az <b>5</b> cevap varsa): <span class="etiket" style="background:var(--zor)">Çok zor</span> doğru oranı %25 veya altı ·
       <span class="etiket" style="background:var(--kolay)">Çok kolay</span> %90 veya üstü (Altın kartlarda %75) ·
@@ -106,7 +108,7 @@
   </div>
 </main>
 
-<script src="sorular.js?v=5"></script>
+<script src="sorular.js?v=6"></script>
 <script>
 (function () {
   'use strict';
@@ -256,6 +258,7 @@
   function ciz() {
     $('bu-cihaz-satir').classList.toggle('gizli', !cihazKayitlari().length || dosyalar.some(d => d.cihaz));
     const var_ = dosyalar.length > 0;
+    $('bos-ipucu').classList.toggle('gizli', var_);
     $('dosyalar').classList.toggle('gizli', !var_);
     $('sonuc').classList.toggle('gizli', !var_);
     if (!var_) return;
@@ -377,6 +380,16 @@
     siralama = { alan: al, yon: siralama.alan === al ? -siralama.yon : 1 };
     kartTablosu();
   };
+
+  // Cevap kayıtları ekranındaki "PDF olarak kaydet": analiz.html?cihaz=1&yazdir=1
+  // Bu cihazdaki tüm kayıtlar (pratik dahil, o ekrandaki gibi) eklenir ve kaydetme penceresi açılır.
+  const parametre = new URLSearchParams(location.search);
+  if (parametre.get('cihaz') === '1' && cihazKayitlari().length) {
+    cihazKayitlariniEkle();
+    Object.keys(modSecili).forEach(m => { modSecili[m] = true; });
+    ciz();
+    if (parametre.get('yazdir') === '1') setTimeout(() => $('yazdir').click(), 400);
+  }
 })();
 </script>
 </body>
