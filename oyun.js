@@ -836,7 +836,7 @@
     if (!kayit.length) {
       $('kayit-icerik').innerHTML = '<div class="panel"><p>Henüz kayıt yok. Oyun veya pratik oynadıkça cevaplar bu cihazda kaydedilir.</p>' +
         '<p class="not">Başka cihazlardan indirilen CSV dosyaları Kart analizi sayfasında incelenebilir.</p>' +
-        '<div class="buton-satiri"><button class="ikincil" onclick="location.href=\'analiz.html?v=6\'">Kart analizi</button></div></div>';
+        '<div class="buton-satiri"><button class="ikincil" onclick="location.href=\'analiz.html?v=7\'">Kart analizi</button></div></div>';
       return;
     }
     const konular = {};
@@ -850,7 +850,7 @@
         return `<tr><td>${k} ${esc(KONULAR[k])}</td><td>${d} / ${t}</td><td><div class="cubuk"><i style="width:${yuzde}%"></i></div> %${yuzde}</td></tr>`;
       }).join('')}</table>
       <p class="not">Kayıtlar yalnızca bu cihazdaki tarayıcıda tutulur; isim kaydedilmez. Araştırma verisi için CSV dosyasını indirin.</p>
-      <div class="buton-satiri"><button id="csv-indir">Excel için indir (CSV)</button><button onclick="location.href='analiz.html?v=6&cihaz=1&yazdir=1'">PDF olarak kaydet</button><button class="ikincil" onclick="location.href='analiz.html?v=6'">Kart analizi</button><button class="ikincil" id="kayit-sil">Kayıtları sil</button></div></div>`;
+      <div class="buton-satiri"><button id="csv-indir">Excel için indir (CSV)</button><button onclick="location.href='analiz.html?v=7&cihaz=1&yazdir=1'">PDF olarak kaydet</button><button class="ikincil" onclick="location.href='analiz.html?v=7'">Kart analizi</button><button class="ikincil" id="kayit-sil">Kayıtları sil</button></div></div>`;
     $('csv-indir').onclick = csvIndir;
     $('kayit-sil').onclick = () => {
       if (!confirm('Bu cihazdaki tüm cevap kayıtları silinsin mi?')) return;

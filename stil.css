@@ -12,7 +12,6 @@
 html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--yazi); font-size: 16px; line-height: 1.45 }
 button { font: inherit; font-weight: 700; cursor: pointer; border: 0; border-radius: 14px; padding: 10px 18px; background: var(--ana); color: #fff;
   box-shadow: 0 3px 0 var(--ana-koyu); transition: transform .15s, box-shadow .15s, filter .15s }
-button:hover:not(:disabled) { filter: brightness(1.04) }
 button:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--ana-koyu) }
 button:disabled { opacity: .4; cursor: default }
 button.ikincil { background: #fff; color: var(--ink); border: 1.5px solid var(--line); box-shadow: 0 3px 0 var(--line) }
@@ -34,9 +33,7 @@ h1, h2, h3 { font-family: var(--yazi); font-weight: 900; margin: 0 0 8px }
 .logo-ikon { width: 42px; height: 42px; border-radius: 50%; background: rgba(255, 255, 255, .25); display: grid; place-items: center; font-size: 22px }
 .ust-nav { display: flex; gap: 6px; align-items: center }
 .ust-nav button { background: transparent; box-shadow: none; color: #fff; font-weight: 800; font-size: 16px; padding: 9px 16px; border-radius: 999px }
-.ust-nav button:hover { background: rgba(255, 255, 255, .2) }
 .ust-nav button.vurgulu { background: #fff; color: var(--ana-koyu); box-shadow: 0 3px 0 rgba(0, 0, 0, .08) }
-.ust-nav button.vurgulu:hover { background: #fff; transform: translateY(-1px) }
 
 /* KARŞILAMA */
 .hero { position: relative; overflow: hidden; text-align: center; border-radius: 32px; padding: 64px 24px 56px; margin-top: 6px;
@@ -59,7 +56,7 @@ h1, h2, h3 { font-family: var(--yazi); font-weight: 900; margin: 0 0 8px }
 
 /* Oyun modu kartları: üstüne gelince kartı alttan dalgalı bir sıvı doldurur */
 .menu { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px }
-.mod-kart { position: relative; overflow: hidden; isolation: isolate; text-align: center; min-height: 260px; padding: 30px 22px;
+.mod-kart { -webkit-tap-highlight-color: transparent; position: relative; overflow: hidden; isolation: isolate; text-align: center; min-height: 260px; padding: 30px 22px;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
   background: var(--card); color: var(--ink); border: 2px solid var(--line); border-radius: 26px; box-shadow: var(--golge);
   transition: border-color .4s, color .4s, transform .3s, box-shadow .3s }
@@ -67,19 +64,14 @@ h1, h2, h3 { font-family: var(--yazi); font-weight: 900; margin: 0 0 8px }
   background: var(--c); transform: translateX(-50%); border-radius: 43%; transition: top 1.3s cubic-bezier(.4, .1, .3, 1);
   animation: dalga 7s linear infinite }
 .mod-kart::after { opacity: .45; border-radius: 40%; animation-duration: 11s; transition-delay: .06s }
-.mod-kart:hover, .mod-kart:focus-visible { color: #fff; border-color: var(--c); transform: translateY(-6px); box-shadow: 0 18px 34px -14px var(--c); outline: none; filter: none }
-.mod-kart:active:not(:disabled) { transform: translateY(-3px); box-shadow: 0 12px 24px -14px var(--c) }
-.mod-kart:hover::before, .mod-kart:focus-visible::before { top: -150% }
-.mod-kart:hover::after, .mod-kart:focus-visible::after { top: -145% }
+.mod-kart:focus-visible { color: #fff; border-color: var(--c); transform: translateY(-6px); box-shadow: 0 18px 34px -14px var(--c); outline: none; filter: none }
+.mod-kart:focus-visible::before { top: -150% }
+.mod-kart:focus-visible::after { top: -145% }
 .mod-ikon { width: 104px; height: 104px; border-radius: 50%; display: grid; place-items: center; font-size: 56px; margin-bottom: 10px;
   background: color-mix(in srgb, var(--c) 16%, #fff); transition: background .4s }
-.mod-kart:hover .mod-ikon { background: rgba(255, 255, 255, .25); animation: jole .7s ease }
 .mod-kart b { font: 900 25px var(--yazi); color: var(--c); transition: color .4s }
-.mod-kart:hover b { color: #fff }
 .mod-kart b::after { content: ''; display: block; width: 36px; height: 4px; border-radius: 2px; background: var(--c); margin: 8px auto 4px; transition: width .4s, background .4s }
-.mod-kart:hover b::after { width: 64px; background: #fff }
 .mod-acik { color: var(--muted); font-size: 15px; font-weight: 600; transition: color .4s }
-.mod-kart:hover .mod-acik { color: rgba(255, 255, 255, .92) }
 @keyframes dalga { to { transform: translateX(-50%) rotate(360deg) } }
 @keyframes jole { 0% { transform: scale(1) } 30% { transform: scale(1.25, .8) } 50% { transform: scale(.85, 1.15) } 70% { transform: scale(1.08, .94) } 100% { transform: scale(1) } }
 
@@ -149,7 +141,6 @@ h1, h2, h3 { font-family: var(--yazi); font-weight: 900; margin: 0 0 8px }
 .tkm-taraf h3 { font-size: 18px; margin-bottom: 8px }
 .tkm-butonlar { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap }
 .tkm-butonlar button { font-size: 34px; padding: 10px 18px; background: #fff7f3; color: var(--ink); line-height: 1; border: 2px solid var(--line); border-radius: 18px; box-shadow: 0 4px 0 var(--line) }
-.tkm-butonlar button:hover { transform: translateY(-3px) rotate(-4deg); border-color: var(--ana) }
 .tkm-butonlar button small { display: block; font-size: 12px; font-weight: 800; margin-top: 4px }
 .tkm-taraf .secildi { font-size: 15px; color: var(--ok); font-weight: 700; padding: 14px 0 }
 .tus-ipucu { font-size: 12px; color: var(--muted); margin-top: 4px }
@@ -165,7 +156,6 @@ h1, h2, h3 { font-family: var(--yazi); font-weight: 900; margin: 0 0 8px }
 .kart .olaylar { margin: 0 0 12px; padding-left: 26px; list-style: upper-roman }
 .secenekler { display: grid; gap: 10px }
 .secenekler button { text-align: left; background: #fffaf7; color: var(--ink); border: 2px solid var(--line); padding: 12px 14px; font-weight: 600; box-shadow: 0 3px 0 var(--line) }
-.secenekler button:hover:not(:disabled) { border-color: var(--ana); background: var(--ana-acik); transform: translateX(3px) }
 .secenekler button.dogru { background: #e3f3ea; border-color: var(--ok); color: var(--ok); font-weight: 700 }
 .secenekler button.yanlis { background: #fbeceb; border-color: var(--no); color: var(--no) }
 .secenekler button:disabled { opacity: 1 }
@@ -235,7 +225,6 @@ th { background: var(--ana-acik) }
 /* PİYON RENGİ SEÇİMİ */
 .renk-secici { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 2px 0 6px }
 .renk-secici .renk { width: 32px; height: 32px; padding: 0; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 1.5px var(--line); transition: transform .15s }
-.renk-secici .renk:hover { transform: scale(1.1) }
 .renk-secici .renk.secili { box-shadow: 0 0 0 3px var(--ink); transform: scale(1.12) }
 
 /* CEVAP SONUCU */
@@ -264,4 +253,28 @@ th { background: var(--ana-acik) }
 @media (max-width: 420px) {
   .ust-nav button.vurgulu .yazi { display: none }
   .ust-nav button.vurgulu { padding: 8px 14px }
+}
+
+/* Üzerine gelme (hover) efektleri yalnızca fareli cihazlarda. Dokunmatik ekranda tarayıcı, parmağın değdiği
+   öğeyi "üzerinde" sayıp efekti kaydırırken rastgele açıyor ve açık bırakıyordu. */
+@media (hover: hover) and (pointer: fine) {
+  button:hover:not(:disabled) { filter: brightness(1.04) }
+  .ust-nav button:hover { background: rgba(255, 255, 255, .2) }
+  .ust-nav button.vurgulu:hover { background: #fff; transform: translateY(-1px) }
+  .mod-kart:hover .mod-ikon { background: rgba(255, 255, 255, .25); animation: jole .7s ease }
+  .mod-kart:hover b { color: #fff }
+  .mod-kart:hover b::after { width: 64px; background: #fff }
+  .mod-kart:hover .mod-acik { color: rgba(255, 255, 255, .92) }
+  .tkm-butonlar button:hover { transform: translateY(-3px) rotate(-4deg); border-color: var(--ana) }
+  .secenekler button:hover:not(:disabled) { border-color: var(--ana); background: var(--ana-acik); transform: translateX(3px) }
+  .renk-secici .renk:hover { transform: scale(1.1) }
+  .mod-kart:hover { color: #fff; border-color: var(--c); transform: translateY(-6px); box-shadow: 0 18px 34px -14px var(--c); outline: none; filter: none }
+  .mod-kart:hover::before { top: -150% }
+  .mod-kart:hover::after { top: -145% }
+  .mod-kart:active:not(:disabled) { transform: translateY(-3px); box-shadow: 0 12px 24px -14px var(--c) }
+}
+
+/* Telefonda mod kartlarında hiçbir efekt yok (genel buton basılma kaydırması dahil) */
+@media (hover: none), (pointer: coarse) {
+  .mod-kart:active:not(:disabled) { transform: none; box-shadow: var(--golge) }
 }
