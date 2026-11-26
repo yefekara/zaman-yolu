@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kart Analizi</title>
+<!-- Zaman Yolu · oyun kayıtlarının kart, konu ve tür bazında analizi (oyundaki "Cevap kayıtları → Kart analizi").
+     İnternetsiz çalışır; veriler tarayıcıda işlenir, hiçbir yere gönderilmez. Kart bilgileri sorular.js'ten okunur.
+     Kaynaklar: bu cihazdaki oyun kayıtları (localStorage 'zamanyolu-kayit'), web oyununun CSV çıktısı veya
+     belgeler/kaynak/fiziksel-kayit-sablonu.csv (en az "kart" ve "dogru" sütunu). -->
+<style>
+  :root { --vurgu: #c2185b; --zemin: #fff; --yazi: #1d1d1f; --soluk: #666; --cizgi: #ddd; --acik: #fdf0f4;
+          --kolay: #e3f2e6; --zor: #fde4e4; --sure: #fff4d6; }
+  body { font-family: Calibri, Arial, sans-serif; color: var(--yazi); background: var(--zemin); margin: 0; font-size: 15px; }
+  main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 17px; margin: 28px 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--acik); }
+  p.alt, .not { color: var(--soluk); font-size: 13px; }
+  .kutu { border: 1px solid var(--cizgi); border-radius: 8px; padding: 12px 14px; margin: 12px 0; }
+  #birak { border: 2px dashed #d9a3b8; background: var(--acik); text-align: center; padding: 22px 12px; border-radius: 10px; cursor: pointer; }
+  #birak.ustunde { background: #f9d9e5; }
+  button { font: inherit; padding: 6px 12px; border: 1px solid var(--vurgu); background: var(--vurgu); color: #fff; border-radius: 6px; cursor: pointer; }
+  button.ikincil { background: #fff; color: var(--vurgu); }
+  select, input[type=text] { font: inherit; padding: 3px 6px; }
+  .tablo-kap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { border: 1px solid var(--cizgi); padding: 5px 7px; text-align: left; vertical-align: top; }
+  th { background: #f6f6f6; position: sticky; top: 0; cursor: default; }
+  th.sirala { cursor: pointer; }
+  td.s, th.s { text-align: right; white-space: nowrap; }
+  tr.kolay td { background: var(--kolay); } tr.zor td { background: var(--zor); } tr.sure td { background: var(--sure); }
+  .etiket { display: inline-block; font-size: 12px; padding: 1px 6px; border-radius: 10px; background: #eee; margin: 1px 2px 1px 0; white-space: nowrap; }
+  .soru { color: var(--soluk); font-size: 12.5px; }
+  .ozet { display: flex; flex-wrap: wrap; gap: 10px; }
+  .ozet div { flex: 1 1 150px; background: var(--acik); border-radius: 8px; padding: 8px 12px; }
+  .ozet b { display: block; font-size: 22px; }
+  .filtre { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+  .hata { color: #b00020; }
+  .gizli { display: none; }
+  #baski-bas { display: none; }
+  @media print {
+    @page { size: A4; margin: 12mm }
+    body { font-size: 11px; }
+    main { max-width: none; padding: 0; }
+    #geri, #giris, #birak, #bu-cihaz-satir, #mod-satir, #isaretli-etiket, #dosya-ipucu, button { display: none !important; }
+    #baski-bas { display: block; margin-bottom: 6px; }
+    .kutu { border: none; padding: 0; margin: 4px 0; }
+    select { border: none; appearance: none; padding: 0; background: none; }
+    table { font-size: 10px; }
+    th { position: static; }
+    tr, .ozet div { break-inside: avoid; }
+    h2 { break-after: avoid; margin-top: 14px; }
+    .ozet div { padding: 4px 8px; }
+    .ozet b { font-size: 16px; }
+    tr.kolay td, tr.zor td, tr.sure td, .ozet div, .etiket { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <p id="geri"><a href="index.html" style="color:var(--vurgu)">← Oyuna dön</a></p>
+  <h1>Zaman Yolu · Kart Analizi</h1>
+  <p id="baski-bas" class="not"></p>
+  <p id="giris" class="alt">Oyun kayıtlarından her kartın, konunun ve kart türünün doğru cevaplanma oranını hesaplar. Veriler yalnızca bu cihazda işlenir, hiçbir yere gönderilmez.</p>
+
+  <div id="birak">CSV dosyalarını buraya sürükleyin veya <button type="button" id="sec">Dosya seç</button>
+    <input type="file" id="dosya" accept=".csv,text/csv" multiple class="gizli">
+    <div class="not">Web oyunundan indirilen kayıtlar veya basılı oyun formlarının girildiği şablon (birden çok dosya seçilebilir)</div>
+  </div>
+  <p id="bu-cihaz-satir" class="gizli">Bu cihazda <b id="bu-cihaz-sayi"></b> oyun kaydı var. <button type="button" class="ikincil" id="bu-cihaz">Bu cihazdaki kayıtları ekle</button></p>
+  <p id="sorular-hata" class="hata gizli">Kart bilgileri okunamadı. Bu sayfa sorular.js ile aynı klasörde (zaman-yolu) durmalı.</p>
+
+  <div id="dosyalar" class="kutu gizli">
+    <b>Yüklenen dosyalar</b> <span class="not" id="dosya-ipucu">· her dosyanın hangi gruba ait olduğunu seçin</span>
+    <div class="tablo-kap"><table id="dosya-tablo"></table></div>
+    <div class="filtre" style="margin-top:10px">
+      <span id="mod-satir">Dahil edilecek oyun modları: <span id="mod-filtre"></span></span>
+      <button class="ikincil" id="temizle">Tümünü kaldır</button>
+    </div>
+  </div>
+
+  <div id="sonuc" class="gizli">
+    <h2>Özet</h2>
+    <div class="ozet" id="ozet"></div>
+
+    <h2>Kart türüne göre doğru oranı <span class="not">(raporda Tablo 5)</span></h2>
+    <div class="tablo-kap"><table id="tur-tablo"></table></div>
+
+    <h2>Konuya göre doğru oranı <span class="not">(raporda Şekil 2)</span></h2>
+    <div class="tablo-kap"><table id="konu-tablo"></table></div>
+
+    <h2>Kart bazında sonuçlar</h2>
+    <div class="filtre">
+      <label>Grup: <select id="kart-grup"></select></label>
+      <label>Ünite: <select id="kart-unite"><option value="">Tümü</option><option>1</option><option>2</option><option>3</option></select></label>
+      <label id="isaretli-etiket"><input type="checkbox" id="yalniz-isaretli"> Yalnızca işaretli kartlar</label>
+      <button id="indir">Kart tablosunu indir (CSV)</button>
+      <button id="yazdir">Sonuçları PDF olarak kaydet</button>
+    </div>
+    <p class="not">İşaretler (en az <b>5</b> cevap varsa): <span class="etiket" style="background:var(--zor)">Çok zor</span> doğru oranı %25 veya altı ·
+      <span class="etiket" style="background:var(--kolay)">Çok kolay</span> %90 veya üstü (Altın kartlarda %75) ·
+      <span class="etiket" style="background:var(--sure)">Süre</span> ortalama cevap süresi 25 sn veya üstü.
+      5'ten az cevabı olan kartlar için oran yalnızca ipucudur. Rakibe geçen sorulardaki ikinci cevaplar da sayılır.</p>
+    <div class="tablo-kap"><table id="kart-tablo"></table></div>
+    <p id="hic" class="not"></p>
+  </div>
+</main>
+
+<script src="sorular.js?v=5"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const TUR_ADI = { bilgi: 'Bilgi', kanit: 'Kanıt', krono: 'Kronoloji', kavram: 'Kavram', altin: 'Altın' };
+  const MOD_ADI = { yerel: 'Aynı cihaz', bot: 'Bilgisayara karşı', cevrimici: 'Özel link', pratik: 'Pratik', fiziksel: 'Basılı (form)' };
+  const GRUPLAR = ['FG', 'DG', 'Pilot', 'Diğer'];
+  const MIN_N = 5, ZOR = 25, KOLAY = 90, KOLAY_ALTIN = 75, UZUN_SURE = 25;
+
+  let KART = {}, konuAdi = {};
+  try {
+    SORULAR.forEach(q => { KART[q.id] = q; });
+    konuAdi = KONULAR;
+  } catch (e) { $('sorular-hata').classList.remove('gizli'); }
+
+  const dosyalar = [];          // { ad, grup, satirlar:[{kart,dogru,sure,mod}], atlanan }
+  const modSecili = {};         // mod -> true/false
+  let siralama = { alan: 'oran', yon: 1 };
+
+  // ── CSV okuma ──
+  function csvAyristir(metin) {
+    metin = metin.replace(/^﻿/, '');
+    const ilkSatir = metin.split(/\r?\n/, 1)[0];
+    const ayrac = (ilkSatir.match(/;/g) || []).length >= (ilkSatir.match(/,/g) || []).length ? ';' : ',';
+    const satirlar = []; let alan = '', satir = [], tirnak = false;
+    for (let i = 0; i < metin.length; i++) {
+      const c = metin[i];
+      if (tirnak) {
+        if (c === '"' && metin[i + 1] === '"') { alan += '"'; i++; }
+        else if (c === '"') tirnak = false;
+        else alan += c;
+      } else if (c === '"') tirnak = true;
+      else if (c === ayrac) { satir.push(alan); alan = ''; }
+      else if (c === '\n' || c === '\r') {
+        if (c === '\r' && metin[i + 1] === '\n') i++;
+        satir.push(alan); alan = '';
+        if (satir.some(x => x.trim() !== '')) satirlar.push(satir);
+        satir = [];
+      } else alan += c;
+    }
+    satir.push(alan);
+    if (satir.some(x => x.trim() !== '')) satirlar.push(satir);
+    return satirlar;
+  }
+
+  const sade = s => String(s).trim().toLocaleLowerCase('tr').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's')
+    .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/[\s-]+/g, '_');
+
+  function dogruCoz(v) {
+    const s = sade(v);
+    if (['1', 'd', 'dogru', 'e', 'evet', '+', 'x', 'true'].includes(s)) return 1;
+    if (['0', 'y', 'yanlis', 'h', 'hayir', '-', 'false'].includes(s)) return 0;
+    return null;
+  }
+
+  function dosyaOku(ad, metin) {
+    const tablo = csvAyristir(metin);
+    if (!tablo.length) return { hata: 'Dosya boş.' };
+    const bas = tablo[0].map(sade);
+    const sut = ad => bas.indexOf(ad);
+    const iKart = sut('kart') >= 0 ? sut('kart') : sut('kart_kodu');
+    const iDogru = sut('dogru');
+    if (iKart < 0 || iDogru < 0) return { hata: '"kart" ve "dogru" sütunları bulunamadı.' };
+    const iSure = sut('sure_sn'), iMod = sut('mod'), iGrup = sut('grup');
+    const satirlar = []; let atlanan = 0; const gruplar = {};
+    tablo.slice(1).forEach(r => {
+      const kart = String(r[iKart] || '').trim().toUpperCase().replace(/\s+/g, '');
+      const dogru = dogruCoz(r[iDogru] || '');
+      if (!KART[kart] || dogru === null) { atlanan++; return; }
+      const sure = iSure >= 0 ? parseFloat(String(r[iSure]).replace(',', '.')) : NaN;
+      const mod = iMod >= 0 && r[iMod] ? sade(r[iMod]) : 'fiziksel';
+      if (iGrup >= 0 && r[iGrup]) gruplar[String(r[iGrup]).trim()] = 1;
+      satirlar.push({ kart, dogru, sure: isFinite(sure) ? sure : null, mod });
+    });
+    // şablonda grup sütunu doluysa onu öner
+    const g = Object.keys(gruplar).map(x => x.toUpperCase());
+    const grup = g.length === 1 && GRUPLAR.map(x => x.toUpperCase()).includes(g[0]) ? GRUPLAR.find(x => x.toUpperCase() === g[0])
+      : (iMod < 0 ? 'FG' : 'DG');
+    return { ad, grup, satirlar, atlanan };
+  }
+
+  function dosyalarEkle(liste) {
+    Array.from(liste).forEach(f => {
+      const r = new FileReader();
+      r.onload = () => {
+        const d = dosyaOku(f.name, r.result);
+        if (d.hata) { alert(f.name + ': ' + d.hata); return; }
+        dosyalar.push(d);
+        d.satirlar.forEach(s => { if (!(s.mod in modSecili)) modSecili[s.mod] = s.mod !== 'pratik'; });
+        ciz();
+      };
+      r.readAsText(f, 'utf-8');
+    });
+  }
+
+  // Oyunun bu tarayıcıda tuttuğu kayıtlar (oyun.js · KAYIT_ANAHTARI)
+  function cihazKayitlari() {
+    try { return JSON.parse(localStorage.getItem('zamanyolu-kayit')) || []; } catch (e) { return []; }
+  }
+  function cihazKayitlariniEkle() {
+    const satirlar = [];
+    cihazKayitlari().forEach(k => {
+      if (!KART[k.kart] || (k.dogru !== 0 && k.dogru !== 1)) return;
+      satirlar.push({ kart: k.kart, dogru: k.dogru, sure: typeof k.sureSn === 'number' ? k.sureSn : null, mod: k.mod || 'yerel' });
+    });
+    dosyalar.push({ ad: 'Bu cihazdaki kayıtlar', grup: 'DG', satirlar, atlanan: 0, cihaz: true });
+    satirlar.forEach(s => { if (!(s.mod in modSecili)) modSecili[s.mod] = s.mod !== 'pratik'; });
+    ciz();
+  }
+  $('bu-cihaz-sayi').textContent = cihazKayitlari().length;
+
+  // ── hesaplama ──
+  function secilenSatirlar(grup) {
+    const out = [];
+    dosyalar.forEach(d => {
+      if (grup && d.grup !== grup) return;
+      d.satirlar.forEach(s => { if (modSecili[s.mod]) out.push(s); });
+    });
+    return out;
+  }
+  function topla(satirlar, anahtar) {
+    const m = {};
+    satirlar.forEach(s => {
+      const k = anahtar(s); const r = m[k] = m[k] || { n: 0, d: 0, sureT: 0, sureN: 0 };
+      r.n++; r.d += s.dogru;
+      if (s.sure !== null) { r.sureT += s.sure; r.sureN++; }
+    });
+    return m;
+  }
+  const yuzde = r => r && r.n ? Math.round(r.d / r.n * 100) : null;
+  const yuzdeYaz = r => r && r.n ? '%' + yuzde(r) + ' <span class="not">(' + r.d + '/' + r.n + ')</span>' : '–';
+  const ortSure = r => r && r.sureN ? Math.round(r.sureT / r.sureN * 10) / 10 : null;
+  const kullanilanGruplar = () => GRUPLAR.filter(g => dosyalar.some(d => d.grup === g));
+
+  function isaretler(q, r) {
+    const out = [];
+    if (!r || r.n < MIN_N) return out;
+    const p = yuzde(r);
+    if (p <= ZOR) out.push('zor');
+    if (p >= (q.tur === 'altin' ? KOLAY_ALTIN : KOLAY)) out.push('kolay');
+    const s = ortSure(r); if (s !== null && s >= UZUN_SURE) out.push('sure');
+    return out;
+  }
+
+  // ── çizim ──
+  function ciz() {
+    $('bu-cihaz-satir').classList.toggle('gizli', !cihazKayitlari().length || dosyalar.some(d => d.cihaz));
+    const var_ = dosyalar.length > 0;
+    $('dosyalar').classList.toggle('gizli', !var_);
+    $('sonuc').classList.toggle('gizli', !var_);
+    if (!var_) return;
+
+    $('dosya-tablo').innerHTML = '<tr><th>Dosya</th><th class="s">Geçerli satır</th><th class="s">Atlanan</th><th>Grup</th><th></th></tr>' +
+      dosyalar.map((d, i) => `<tr><td>${esc(d.ad)}</td><td class="s">${d.satirlar.length}</td><td class="s">${d.atlanan}</td>
+        <td><select data-i="${i}">${GRUPLAR.map(g => `<option${g === d.grup ? ' selected' : ''}>${g}</option>`).join('')}</select></td>
+        <td><button class="ikincil" data-sil="${i}">Kaldır</button></td></tr>`).join('');
+    $('mod-filtre').innerHTML = Object.keys(modSecili).map(m =>
+      `<label style="margin-right:10px"><input type="checkbox" data-mod="${esc(m)}"${modSecili[m] ? ' checked' : ''}> ${esc(MOD_ADI[m] || m)}</label>`).join('');
+
+    const gruplar = kullanilanGruplar();
+    const tum = secilenSatirlar();
+    const genel = topla(tum, () => 'x').x;
+    $('ozet').innerHTML = `<div>Cevap sayısı<b>${tum.length}</b></div><div>Genel doğru oranı<b>${genel ? '%' + yuzde(genel) : '–'}</b></div>` +
+      gruplar.map(g => { const r = topla(secilenSatirlar(g), () => 'x').x; return `<div>${g} doğru oranı<b>${r ? '%' + yuzde(r) : '–'}</b></div>`; }).join('') +
+      `<div>Ortalama cevap süresi<b>${genel && ortSure(genel) !== null ? ortSure(genel) + ' sn' : '–'}</b></div>`;
+
+    // tür tablosu
+    const grupVerisi = gruplar.map(g => secilenSatirlar(g));
+    const turG = grupVerisi.map(s => topla(s, x => KART[x.kart].tur));
+    const turT = topla(tum, x => KART[x.kart].tur);
+    const basGrup = gruplar.map(g => `<th class="s">${g} doğru %</th>`).join('');
+    $('tur-tablo').innerHTML = `<tr><th>Kart türü</th>${basGrup}<th class="s">Toplam</th></tr>` +
+      Object.keys(TUR_ADI).map(t => `<tr><td>${TUR_ADI[t]}</td>${turG.map(m => `<td class="s">${yuzdeYaz(m[t])}</td>`).join('')}<td class="s">${yuzdeYaz(turT[t])}</td></tr>`).join('') +
+      `<tr><th>Toplam</th>${grupVerisi.map(s => `<th class="s">${yuzdeYaz(topla(s, () => 'x').x)}</th>`).join('')}<th class="s">${yuzdeYaz(genel)}</th></tr>`;
+
+    // konu tablosu (en zor konu üstte)
+    const konuG = grupVerisi.map(s => topla(s, x => KART[x.kart].konu));
+    const konuT = topla(tum, x => KART[x.kart].konu);
+    const konular = Object.keys(konuAdi).sort((a, b) => (yuzde(konuT[a]) ?? 999) - (yuzde(konuT[b]) ?? 999));
+    $('konu-tablo').innerHTML = `<tr><th>Konu</th>${basGrup}<th class="s">Toplam</th></tr>` +
+      konular.map(k => `<tr><td>${k} ${esc(konuAdi[k])}</td>${konuG.map(m => `<td class="s">${yuzdeYaz(m[k])}</td>`).join('')}<td class="s">${yuzdeYaz(konuT[k])}</td></tr>`).join('');
+
+    // kart tablosu
+    const sec = $('kart-grup'); const onceki = sec.value;
+    sec.innerHTML = '<option value="">Tüm gruplar</option>' + gruplar.map(g => `<option>${g}</option>`).join('');
+    if (gruplar.includes(onceki)) sec.value = onceki;
+    kartTablosu();
+  }
+
+  function kartSatirlari() {
+    const veri = topla(secilenSatirlar($('kart-grup').value), x => x.kart);
+    const unite = $('kart-unite').value;
+    return SORULAR.filter(q => !unite || String(q.unite) === unite).map(q => {
+      const r = veri[q.id];
+      return { q, r, oran: yuzde(r), sure: ortSure(r), isaret: isaretler(q, r) };
+    });
+  }
+
+  function kartTablosu() {
+    let satirlar = kartSatirlari();
+    const hic = satirlar.filter(s => !s.r).map(s => s.q.id);
+    satirlar = satirlar.filter(s => s.r);
+    if ($('yalniz-isaretli').checked) satirlar = satirlar.filter(s => s.isaret.length);
+    const { alan, yon } = siralama;
+    satirlar.sort((a, b) => {
+      const va = alan === 'kart' ? a.q.id : alan === 'n' ? a.r.n : alan === 'sure' ? (a.sure ?? -1) : a.oran;
+      const vb = alan === 'kart' ? b.q.id : alan === 'n' ? b.r.n : alan === 'sure' ? (b.sure ?? -1) : b.oran;
+      return (va < vb ? -1 : va > vb ? 1 : 0) * yon;
+    });
+    const ok = a => siralama.alan === a ? (siralama.yon > 0 ? ' ▲' : ' ▼') : '';
+    const etiket = { zor: 'Çok zor', kolay: 'Çok kolay', sure: 'Süre' };
+    $('kart-tablo').innerHTML = `<tr><th class="sirala" data-al="kart">Kart${ok('kart')}</th><th>Tür · Konu · Sayfa</th>
+      <th class="sirala s" data-al="n">Cevap${ok('n')}</th><th class="sirala s" data-al="oran">Doğru %${ok('oran')}</th>
+      <th class="sirala s" data-al="sure">Ort. süre${ok('sure')}</th><th>İşaret</th></tr>` +
+      satirlar.map(s => `<tr class="${s.isaret[0] || ''}"><td style="white-space:nowrap"><b>${s.q.id}</b></td>
+        <td>${TUR_ADI[s.q.tur]} · ${s.q.konu} · s. ${esc(s.q.sayfa)}<div class="soru">${esc((s.q.soru || s.q.kavram || '').slice(0, 110))}</div></td>
+        <td class="s">${s.r.n}</td><td class="s">%${s.oran}${s.r.n < MIN_N ? ' <span class="not">(az)</span>' : ''}</td>
+        <td class="s">${s.sure !== null ? s.sure + ' sn' : '–'}</td>
+        <td>${s.isaret.map(i => `<span class="etiket">${etiket[i]}</span>`).join('')}</td></tr>`).join('');
+    $('hic').textContent = hic.length ? 'Hiç cevaplanmamış kartlar (' + hic.length + '): ' + hic.join(', ') : 'Bütün kartlar en az bir kez cevaplanmış.';
+  }
+
+  function kartCsvIndir() {
+    const bas = ['kart', 'unite', 'konu', 'konu_adi', 'tur', 'sayfa', 'cevap_sayisi', 'dogru_sayisi', 'dogru_yuzde', 'ort_sure_sn', 'isaret'];
+    const etiket = { zor: 'cok zor', kolay: 'cok kolay', sure: 'sure' };
+    const satirlar = kartSatirlari().map(s => [s.q.id, s.q.unite, s.q.konu, konuAdi[s.q.konu], TUR_ADI[s.q.tur], s.q.sayfa,
+      s.r ? s.r.n : 0, s.r ? s.r.d : 0, s.oran ?? '', s.sure !== null ? String(s.sure).replace('.', ',') : '', s.isaret.map(i => etiket[i]).join(' / ')]
+      .map(v => '"' + String(v).replace(/"/g, '""') + '"').join(';'));
+    const grup = $('kart-grup').value || 'tum';
+    const blob = new Blob(['﻿' + bas.join(';') + '\n' + satirlar.join('\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'zaman-yolu-kart-analizi-' + grup.toLowerCase() + '.csv';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+
+  // ── olaylar ──
+  const birak = $('birak');
+  $('sec').onclick = e => { e.stopPropagation(); $('dosya').click(); };
+  birak.onclick = () => $('dosya').click();
+  $('dosya').onchange = e => { dosyalarEkle(e.target.files); e.target.value = ''; };
+  birak.ondragover = e => { e.preventDefault(); birak.classList.add('ustunde'); };
+  birak.ondragleave = () => birak.classList.remove('ustunde');
+  birak.ondrop = e => { e.preventDefault(); birak.classList.remove('ustunde'); dosyalarEkle(e.dataTransfer.files); };
+  $('dosya-tablo').onchange = e => { const i = e.target.dataset.i; if (i !== undefined) { dosyalar[i].grup = e.target.value; ciz(); } };
+  $('dosya-tablo').onclick = e => { const i = e.target.dataset.sil; if (i !== undefined) { dosyalar.splice(+i, 1); ciz(); } };
+  $('mod-filtre').onchange = e => { modSecili[e.target.dataset.mod] = e.target.checked; ciz(); };
+  $('temizle').onclick = () => { dosyalar.length = 0; ciz(); };
+  $('bu-cihaz').onclick = cihazKayitlariniEkle;
+  ciz();
+  $('kart-grup').onchange = kartTablosu;
+  $('kart-unite').onchange = kartTablosu;
+  $('yalniz-isaretli').onchange = kartTablosu;
+  $('indir').onclick = kartCsvIndir;
+  $('yazdir').onclick = () => {
+    const tarih = new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const grup = $('kart-grup').value || 'tüm gruplar', unite = $('kart-unite').value ? $('kart-unite').value + '. ünite' : 'tüm üniteler';
+    const modlar = Object.keys(modSecili).filter(m => modSecili[m]).map(m => MOD_ADI[m] || m).join(', ');
+    $('baski-bas').textContent = 'Rapor tarihi: ' + tarih + ' · Kaynak dosyalar: ' + dosyalar.map(d => d.ad + ' (' + d.grup + ')').join(', ') +
+      ' · Dahil edilen modlar: ' + modlar +
+      ' · Kart tablosu: ' + grup + ', ' + unite + ($('yalniz-isaretli').checked ? ', yalnızca işaretli kartlar' : '');
+    window.print();
+  };
+  $('kart-tablo').onclick = e => {
+    const al = e.target.closest('th') && e.target.closest('th').dataset.al; if (!al) return;
+    siralama = { alan: al, yon: siralama.alan === al ? -siralama.yon : 1 };
+    kartTablosu();
+  };
+})();
+</script>
+</body>
+</html>

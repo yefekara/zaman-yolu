@@ -18,6 +18,7 @@
 | `ag.js` | Özel link modu (PeerJS / WebRTC). Yalnızca bu mod seçilince yüklenir. |
 | `index.html`, `stil.css` | Oyun sayfası ve görünümü. |
 | `kartlar.html` | Basılabilir set. |
+| `analiz.html` | Kart analizi (Cevap kayıtları → Kart analizi): cihazdaki kayıtları veya CSV dosyalarını okuyup kart, konu ve kart türü başına doğru oranlarını gösterir; sonuçları CSV veya PDF olarak kaydeder. Veriler tarayıcıda işlenir, gönderilmez. |
 | `../testler/` | Kural ve tarayıcı testleri (proje klasöründe durur, GitHub'a yüklenmez): `node testler/motor.test.js` |
 
 ## Bir soruyu değiştirmek veya eklemek
@@ -52,4 +53,4 @@ Bir ünitedeki her kart türünden en az birkaç kart bulunmalıdır; oyun o tü
 
 ## Veriler ve gizlilik
 
-Oyun hesap, isim veya kişisel bilgi toplamaz. Cevaplar (kart, konu, doğru/yanlış, süre) yalnızca o cihazdaki tarayıcıda tutulur ve **Cevap Kayıtları** ekranından CSV (Excel) olarak indirilebilir. Özel link modunda oyun verisi iki cihaz arasında doğrudan ve şifreli aktarılır; PeerJS’in ücretsiz aracı yalnızca iki cihazı ilk anda tanıştırır.
+Oyun hesap, isim veya kişisel bilgi toplamaz. Cevaplar (kart, konu, doğru/yanlış, süre) yalnızca o cihazdaki tarayıcıda tutulur ve **Cevap Kayıtları** ekranından CSV (Excel) olarak indirilebilir ve **Kart analizi** sayfasında incelenebilir. Özel link modunda oyun verisi iki cihaz arasında doğrudan ve şifreli aktarılır; PeerJS’in ücretsiz aracı yalnızca iki cihazı ilk anda tanıştırır.
